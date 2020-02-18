@@ -19,12 +19,20 @@ jobs:
             with:
                 go-version: 1.13.x
         -
-            name: Prepare build vars
+            name: Build vars
             id: build_vars
             run: |
                 echo ::set-output name=build_commit::${{ github.sha }}
                 echo ::set-output name=build_time::$(date -u +"%Y-%m-%dT%H:%M:%S")
                 echo ::set-output name=build_version::$(git describe --tags 2>/dev/null || echo "v0.0.0")
+        -
+            name: Build
+            run: |
+                go build -o testing-actions-go -ldflags="-X main.buildCommit=${{ steps.build_vars.outputs.build_commit }} -X main.buildTime=${{ steps.build_vars.outputs.build_time }} -X main.buildVersion=${{ steps.build_vars.outputs.build_version }}"
+        -
+            name: Unit tests
+            run: |
+                go test ./...
         -
             name: Build using goreleaser
             uses: goreleaser/goreleaser-action@v1
@@ -41,14 +49,3 @@ jobs:
             run: |
                 echo $(pwd)
                 ./dist/testing-actions-go_linux_amd64/testing-actions-go
-
-    unit_test:
-        runs-on: ubuntu-latest
-        needs: [build_test]
-        steps:
-        -
-            name: output
-            run: |
-                echo $(pwd)
-                ./dist/testing-actions-go_linux_amd64/testing-actions-go
-
