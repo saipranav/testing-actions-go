@@ -60,6 +60,7 @@ jobs:
         -
             name: Integration tests
             run: |
+                echo hi
                 echo ${{ github.ref }}
                 curl http://127.0.0.1:7200/v1/sys/seal-status
         -
