@@ -8,11 +8,27 @@ jobs:
     ci:
         runs-on: ubuntu-latest
         services:
-            vault:
+        -
+            source_consul:
+                image: consul
+                ports: 
+                -
+                    6500:8500
+            destination_consul:
+                image: consul
+                ports: 
+                -
+                    7500:8500
+            source_vault:
                 image: vault
                 ports: 
                 -
-                    8200:8200
+                    6200:8200
+            destination_vault:
+                image: vault
+                ports: 
+                -
+                    7200:8200
         steps:
         -
             name: Checkout
@@ -34,6 +50,8 @@ jobs:
         -
             name: Build
             run: |
+                go mod download
+                go generate ./...
                 go build -o testing-actions-go -ldflags="-X main.buildCommit=${{ steps.build_vars.outputs.build_commit }} -X main.buildTime=${{ steps.build_vars.outputs.build_time }} -X main.buildVersion=${{ steps.build_vars.outputs.build_version }}"
         -
             name: Unit tests
@@ -42,9 +60,11 @@ jobs:
         -
             name: Integration tests
             run: |
-                curl http://127.0.0.1:8200/v1/sys/seal-status
+                echo ${{ github.ref }}
+                curl http://127.0.0.1:7200/v1/sys/seal-status
         -
             name: Build using goreleaser
+            if: startsWith(github.ref, ref/tags)
             uses: goreleaser/goreleaser-action@v1
             with:
                 version: latest
