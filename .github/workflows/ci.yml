@@ -4,9 +4,12 @@ on:
     pull_request:
     push:
         branches:
-            - '*'
+        - '*'
         tags:
-            - '*'
+        - '*'
+    create:
+        tags:
+        - '*'
 
 jobs:
     ci:
