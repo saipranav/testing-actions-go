@@ -67,7 +67,6 @@ jobs:
                 curl http://127.0.0.1:7200/v1/sys/seal-status
         -
             name: Release using goreleaser
-            if: startsWith( github.ref, 'ref/tags')
             uses: goreleaser/goreleaser-action@v1
             with:
                 version: latest
