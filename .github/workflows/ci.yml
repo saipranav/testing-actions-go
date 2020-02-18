@@ -63,8 +63,8 @@ jobs:
                 echo ${{ github.ref }}
                 curl http://127.0.0.1:7200/v1/sys/seal-status
         -
-            name: Build using goreleaser
-            if: startsWith( github.ref, 'ref/tags')
+            name: Snapshot and validate using goreleaser
+            if: !startsWith( github.ref, 'ref/tags')
             uses: goreleaser/goreleaser-action@v1
             with:
                 version: latest
@@ -75,7 +75,14 @@ jobs:
                 BUILD_TIME: ${{ steps.build_vars.outputs.build_time }}
                 BUILD_VERSION: ${{ steps.build_vars.outputs.build_version }}
         -
-            name: output
-            run: |
-                echo $(pwd)
-                ./dist/testing-actions-go_linux_amd64/testing-actions-go
+            name: Release using goreleaser
+            if: startsWith( github.ref, 'ref/tags')
+            uses: goreleaser/goreleaser-action@v1
+            with:
+                version: latest
+                args: release --rm-dist
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                BUILD_COMMIT: ${{ steps.build_vars.outputs.build_commit }}
+                BUILD_TIME: ${{ steps.build_vars.outputs.build_time }}
+                BUILD_VERSION: ${{ steps.build_vars.outputs.build_version }}
