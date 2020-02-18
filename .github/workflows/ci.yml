@@ -7,6 +7,12 @@ on:
 jobs:
     ci:
         runs-on: ubuntu-latest
+        services:
+            vault:
+                image: vault
+                ports: 
+                -
+                    8200:8200
         steps:
         -
             name: Checkout
@@ -35,12 +41,6 @@ jobs:
                 go test ./...
         -
             name: Integration tests
-            services:
-                vault:
-                    image: vault
-                    ports: 
-                    -
-                        8200:8200
             run: |
                 curl http://127.0.0.1:8200/v1/sys/seal-status
         -
