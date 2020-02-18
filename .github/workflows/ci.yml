@@ -76,7 +76,7 @@ jobs:
                 BUILD_VERSION: ${{ steps.build_vars.outputs.build_version }}
         -
             name: Release using goreleaser
-            if: startsWith( github.ref, 'ref/tags')
+            if: ! startsWith( github.ref, 'ref/tags')
             uses: goreleaser/goreleaser-action@v1
             with:
                 version: latest
