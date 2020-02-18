@@ -35,7 +35,7 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 BUILD_COMMIT: ${{ steps.build_vars.outputs.build_commit }}
                 BUILD_TIME: ${{ steps.build_vars.outputs.build_time }}
-                BUILD_COMMIT: ${{ steps.build_vars.outputs.build_version }}
+                BUILD_VERSION: ${{ steps.build_vars.outputs.build_version }}
         -
             name: output
             run: |
