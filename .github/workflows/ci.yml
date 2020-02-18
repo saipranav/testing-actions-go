@@ -1,11 +1,11 @@
-name: snapshot
+name: ci
 
 on:
     pull_request:
     push:
 
 jobs:
-    build_test:
+    ci:
         runs-on: ubuntu-latest
         steps:
         -
@@ -33,6 +33,16 @@ jobs:
             name: Unit tests
             run: |
                 go test ./...
+        -
+            name: Integration tests
+            services:
+                vault:
+                    image: vault
+                    ports: 
+                    -
+                        8200:8200
+            run: |
+                curl http://127.0.0.1:8200/v1/sys/seal-status
         -
             name: Build using goreleaser
             uses: goreleaser/goreleaser-action@v1
